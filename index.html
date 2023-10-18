@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City weather</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- bootstrap -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+     <!-- font awesome -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+</head>
+<body class="bg-dark">
+
+    <div class="container d-flex justify-content-center align-items-center p-2 mt-3">
+        <div class="body-left p-4">
+            <h1 class="heading text-white">WEATHER</h1>
+            <div id="result1">
+                
+            </div>
+        </div>
+        <div class="body-right bg-secondary p-3">
+            <input id="cityInput" type="text" class="w-100 p-2 text-white fs-4" placeholder="Enter City name">
+            <div class="divider"></div>
+            <div onclick="findWeather()" class="p-3 bg-light w-25 text-center border border-2 border-dark">
+                <i class="fa-solid fa-magnifying-glass fs-3"></i>
+            </div>
+            <div class="divider"></div>
+            <p class="text-white fs-5">Weather Details</p>
+            <div class="ms-2 P-2" id="result2">
+                
+            </div>
+            <div class="divider"></div>
+        </div>
+    </div>
+
+</body>
+
+<script>
+
+    const findWeather = async () => {
+         
+        let city = cityInput.value
+
+        if(city)
+        {
+            const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=8ac5c4d57ba6a4b3dfcf622700447b1e&units=metric`)
+            console.log(response);
+
+            if(response.status===200)
+            {
+                const cityDetails = await response.json()
+                console.log(cityDetails);
+
+                let temp = cityDetails.main.temp
+                let feels_like = cityDetails.main.feels_like
+                let name = cityDetails.name
+                let country = cityDetails.sys.country
+                let humidity = cityDetails.main.humidity
+                let wind = cityDetails.wind.speed
+                let pressure = cityDetails.main.pressure
+
+                let currentDate = new Date();
+                let timezoneOffsetMinutes = cityDetails.timezone
+                currentDate.setMinutes(currentDate.getMinutes() + timezoneOffsetMinutes);
+
+                result1.innerHTML = `
+                
+                <h2 class="text-white">${temp}&deg</h2>
+                <p class="text-white">feels like ${feels_like}&deg</p>
+                <h3 class="text-white">${name}</h3>
+                <p class="para2">${currentDate}</p>
+
+                `
+
+                result2.innerHTML = `
+                <p class="text-white">Country</p>
+                <p class="text-dark">${country}</p>
+                <p class="text-white">Humidity</p>
+                <p class="text-dark">${humidity}%</p>
+                <p class="text-white">Wind</p>
+                <p class="text-dark">${wind}kmph</p>
+                <p class="text-white">Pressure</p>
+                <p class="text-dark">${pressure}</p>
+                `
+            }
+
+            else{
+                alert("Weather Details Not found  try again...!")
+            }
+        }
+        else{
+            alert("Enter City name...!")
+        }
+    }
+
+</script>
+
+</html>
